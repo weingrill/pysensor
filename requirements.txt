@@ -1,0 +1,10 @@
+Flask==0.12.2
+Flask-SSLify==0.1.5
+Jinja2==2.10
+MarkupSafe==1.0
+Werkzeug==0.14.1
+argparse==1.2.1
+click==6.7
+itsdangerous==0.24
+uWSGI==2.0.16
+wsgiref==0.1.2
