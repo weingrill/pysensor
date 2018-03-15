@@ -7,6 +7,7 @@ from flask import request
 from flask_sslify import SSLify
 import sqlite3
 import datetime
+import logging
 import _config
 
 application = Flask(__name__)
@@ -20,12 +21,15 @@ def hello():
 @application.route("/createdb")
 def createdb():
     '''creates the database table'''
-    conn = sqlite3.connect('pysensor.db')
-    c = conn.cursor()
-    # Create table
-    c.execute("CREATE TABLE sensordata (device text, value real, timestamp text)")
-    conn.commit()
-    conn.close()
+    try:
+        conn = sqlite3.connect('pysensor.db')
+        c = conn.cursor()
+        # Create table
+        c.execute("CREATE TABLE sensordata (device text, value real, timestamp text)")
+        conn.commit()
+        conn.close()
+    except e:
+        return str(e)
     return "Database created"
 
 
@@ -38,15 +42,22 @@ def savedata(data):
     if not u'authtoken' in data or data[u'authtoken'] != _config.authtoken:
         return "invalid authtoken"
 
-    conn = sqlite3.connect('pysensor.db')
-    c = conn.cursor()
+    try:
+        conn = sqlite3.connect('pysensor.db')
+        c = conn.cursor()
+    except e:
+        return str(e)
 
     data[u'value'] = float(data[u'value'])
     # Insert data
     if not u'timestamp' in data or data[u'timestamp']=='':
         data[u'timetamp'] = datetime.datetime.utcnow().isoformat()
-    c.execute("INSERT INTO sensordata VALUES ('%(device)s',%(value)f,'%(timestamp)s')" % data)
-    conn.commit()
+    try:
+        c.execute("INSERT INTO sensordata VALUES ('%(device)s',%(value)f,'%(timestamp)s')" % data)
+        conn.commit()
+    except e:
+        conn.close()
+        return str(e)
     conn.close()
 
 def getdata():
