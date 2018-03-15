@@ -6,6 +6,7 @@ from flask import Flask
 from flask import request
 from flask_sslify import SSLify
 import sqlite3
+import _config
 
 application = Flask(__name__)
 sslify = SSLify(application)
@@ -30,6 +31,9 @@ https://techtutorialsx.com/2017/01/07/flask-parsing-json-data/
 '''
 
 def savedata(data):
+    if not u'authtoken' in data or data[u'authtoken'] != _config.authtoken:
+        return "invalid authtoken"
+
     conn = sqlite3.connect('pysensor.db')
     c = conn.cursor()
     
@@ -38,6 +42,16 @@ def savedata(data):
     c.execute("INSERT INTO sensordata VALUES ('%(device)s',%(value)f,'%(timestamp)s')" % data)
     conn.commit()
     conn.close()
+
+@application.route("/")
+def showdata():
+    conn = sqlite3.connect('pysensor.db')
+    c = conn.cursor()
+
+    c.execute("SELECT device, value, timestamp from sensordata LIMIT 10")
+    data = c.fetchall()
+    conn.close()
+    return str(data)
 
 @application.route('/postjson', methods = ['POST'])
 def postJsonHandler():
