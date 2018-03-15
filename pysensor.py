@@ -11,7 +11,7 @@ import logging
 import _config
 
 logger = logging.getLogger(__name__)
-logger.setLevel(DEBUG)
+logger.setLevel(logging.DEBUG)
 
 application = Flask(__name__)
 sslify = SSLify(application)
