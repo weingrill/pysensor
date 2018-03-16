@@ -33,8 +33,9 @@ def createdb():
         c.execute("CREATE TABLE sensordata (device text, value real, timestamp text)")
         conn.commit()
         conn.close()
-    except e:
-        return str(e)
+    except:
+        logger.exception('cannot create table')
+        return
     return "Database created"
 
 
@@ -52,9 +53,9 @@ def savedata(data):
     try:
         conn = sqlite3.connect('pysensor.db')
         c = conn.cursor()
-    except e:
+    except:
         logger.exception('cannot connect to db')
-        return str(e)
+        return
 
     data[u'value'] = float(data[u'value'])
     # Insert data
@@ -64,10 +65,10 @@ def savedata(data):
         logger.debug(str(data))
         c.execute("INSERT INTO sensordata VALUES ('%(device)s',%(value)f,'%(timestamp)s')" % data)
         conn.commit()
-    except e:
+    except:
         logger.exception('cannot commit')
         conn.close()
-        return str(e)
+        return
     conn.close()
 
 def getdata():
@@ -76,9 +77,9 @@ def getdata():
     try:
         conn = sqlite3.connect('pysensor.db')
         c = conn.cursor()
-    except e:
+    except:
         logger.exception('cannot connect to db')
-        return str(e)
+        return
 
     c.execute("SELECT device, value, timestamp from sensordata LIMIT 10")
     data = c.fetchall()
