@@ -63,7 +63,9 @@ def savedata(data):
     data[u'value'] = float(data[u'value'])
     # Insert data
     if not u'timestamp' in data or data[u'timestamp']=='':
+        logger.warn('no timestamp in data')
         data[u'timetamp'] = datetime.datetime.utcnow().isoformat()
+        logger.debug('%s', data)
     try:
         logger.debug(str(data))
         c.execute("INSERT INTO sensordata VALUES ('%(device)s',%(value)f,'%(timestamp)s')" % data)
@@ -99,7 +101,7 @@ def base():
         if not request.is_json:
             return 'invalid JSON object\n%s' % str(request)
         content = request.get_json()
-        print (content)
+        logger.debug('%s',content)
         savedata(content)
         return 'JSON posted'
 
