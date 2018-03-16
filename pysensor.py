@@ -10,8 +10,11 @@ import datetime
 import logging
 import _config
 
+logging.basicConfig(filename='pysensor.log',
+                    format='%(asctime)s %(levelname)s %(message)s',
+                    level=logging.DEBUG)
 logger = logging.getLogger(__name__)
-logger.setLevel(logging.DEBUG)
+#logger.setLevel(logging.DEBUG)
 
 application = Flask(__name__)
 sslify = SSLify(application)
