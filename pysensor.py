@@ -33,7 +33,7 @@ def createdb():
         conn = sqlite3.connect('pysensor.db')
         c = conn.cursor()
         # Create table
-        c.execute("CREATE TABLE sensordata (device text, value real, timestamp text)")
+        c.execute("CREATE TABLE sensordata (device text, value real, epoch text)")
         conn.commit()
         conn.close()
     except:
@@ -62,13 +62,13 @@ def savedata(data):
 
     data[u'value'] = float(data[u'value'])
     # Insert data
-    if not u'timestamp' in data or data[u'timestamp']=='':
-        logger.warn('no timestamp in data')
-        data[u'timetamp'] = datetime.datetime.utcnow().isoformat()
+    if not u'epoch' in data or data[u'epoch']=='':
+        logger.warn('no epoch in data')
+        data[u'epoch'] = datetime.datetime.utcnow().isoformat()
         logger.debug('%s', data)
     try:
         logger.debug(str(data))
-        c.execute("INSERT INTO sensordata VALUES ('%(device)s',%(value)f,'%(timestamp)s')" % data)
+        c.execute("INSERT INTO sensordata VALUES ('%(device)s',%(value)f,'%(epoch)s')" % data)
         conn.commit()
     except:
         logger.exception('cannot commit')
@@ -86,7 +86,7 @@ def getdata():
         logger.exception('cannot connect to db')
         return
 
-    c.execute("SELECT device, value, timestamp from sensordata LIMIT 10")
+    c.execute("SELECT device, value, epoch from sensordata LIMIT 10")
     data = c.fetchall()
     conn.close()
     return str(data)
