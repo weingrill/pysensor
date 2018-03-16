@@ -25,6 +25,11 @@ def hello():
     logger.debug('hello')
     return "<h1 style='color:blue'>Hello There!</h1>"
 
+@application.route("/poly")
+def poly():
+    from plotting import polynomial
+    polynomial()
+
 @application.route("/createdb")
 def createdb():
     '''creates the database table'''
