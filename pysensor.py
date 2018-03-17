@@ -28,7 +28,7 @@ def hello():
 @application.route("/poly")
 def poly():
     from plotting import polynomial
-    polynomial()
+    return polynomial()
 
 @application.route("/createdb")
 def createdb():
